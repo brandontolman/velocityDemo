@@ -8,43 +8,52 @@ on:
 
 jobs:
   build:
+    name: Build Package
     runs-on: ubuntu-latest
     steps:
-      # Checkout code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Build Stage
-      - name: Build project
+      - name: Build Package
         run: |
           echo "Build commands go here"
           # e.g. npm install, make, etc.
 
   code-scan:
+    name: Code Scan
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # Code Scan Stage
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Run code scan
         run: |
           echo "Run code scanning tools here"
           # e.g. npm audit, static analysis tools, etc.
 
   test:
+    name: Automated Test
     runs-on: ubuntu-latest
     needs: code-scan
     steps:
-      # Test Stage
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Run tests
         run: |
           echo "Run tests here"
           # e.g. npm test, pytest, etc.
+
+  change: 
+    name: Change Control
+    runs-on: ubuntu-latest
+    needs: registerPackage
+    steps:
+      - name: ServiceNow Change Attributes
+        uses: ServiceNow/servicenow-devops-change@v2.0.0
+        with:
+          devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL_ADEVOPS2 }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID_ADEVOPS2 }}
+          context-github: ${{ toJSON(github) }}
+          job-name: 'Change Control'
+          change-request: '{"setCloseCode":"true","attributes":{"short_description":"change created from github"}}'
+          interval: '100'
+          timeout: '3600'
+          deployment-gate: '{"environment":"deploy-gates-demo","jobName":"Deploy"}'
+          
 
   deploy:
     runs-on: ubuntu-latest
