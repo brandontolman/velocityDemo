@@ -1,0 +1,61 @@
+name: Basic CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Build Stage
+      - name: Build project
+        run: |
+          echo "Build commands go here"
+          # e.g. npm install, make, etc.
+
+  code-scan:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Code Scan Stage
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run code scan
+        run: |
+          echo "Run code scanning tools here"
+          # e.g. npm audit, static analysis tools, etc.
+
+  test:
+    runs-on: ubuntu-latest
+    needs: code-scan
+    steps:
+      # Test Stage
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        run: |
+          echo "Run tests here"
+          # e.g. npm test, pytest, etc.
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      # Deploy Stage
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy application
+        run: |
+          echo "Deploy commands go here"
+          # e.g. upload to server, deploy to cloud, etc.
