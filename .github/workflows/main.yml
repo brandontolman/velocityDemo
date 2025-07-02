@@ -1,4 +1,4 @@
-name: Basic CI/CD Workflow
+name: main
 
 on:
   push:
