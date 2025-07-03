@@ -3,6 +3,9 @@ name: main
 on:
   workflow_dispatch:
 
+env:
+  ACTIONS_STEP_DEBUG: true
+
 jobs:
   build:
     name: Build Package
