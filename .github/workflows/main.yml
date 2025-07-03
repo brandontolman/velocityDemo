@@ -39,32 +39,30 @@ jobs:
   change: 
     name: Change Control
     runs-on: ubuntu-latest
-    needs: registerPackage
+    needs: test
     steps:
-      - name: ServiceNow Change Attributes
-        uses: ServiceNow/servicenow-devops-change@v2.0.0
+      - name: Change Control
+        uses: ServiceNow/servicenow-devops-change@v6.0.0
+        id: create
         with:
-          devops-integration-token: ${{ secrets.SN_DEVOPS_TOKEN }}
-          instance-url: ${{ secrets.SN_INSTANCE_URL_ADEVOPS2 }}
-          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID_ADEVOPS2 }}
+          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: 'Change Control'
           change-request: '{"setCloseCode":"true","attributes":{"short_description":"change created from github"}}'
           interval: '100'
           timeout: '3600'
-          deployment-gate: '{"environment":"deploy-gates-demo","jobName":"Deploy"}'
+          abortOnChangeCreationFailure: true
+          abortOnChangeStepTimeout: true
+      - name: Output of Change Creation
+        run: echo "change-request-number = ${{ steps.create.outputs.change-request-number }} and change-request-sys-id = ${{ steps.create.outputs.change-request-sys-id }} " >> $GITHUB_OUTPUT
           
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test
+    needs: change
     if: github.ref == 'refs/heads/main'
-    steps:
-      # Deploy Stage
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Deploy application
-        run: |
-          echo "Deploy commands go here"
-          # e.g. upload to server, deploy to cloud, etc.
+    steps:   
+      - name: Run Deployment Script
+        run: echo "Deployment Finished....."
