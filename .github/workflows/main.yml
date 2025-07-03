@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: code-scan
     steps:
-      - name: Run tests
+      - name: Automated Test
         run: |
           echo "Run tests here"
           # e.g. npm test, pytest, etc.
