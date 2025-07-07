@@ -50,7 +50,7 @@ jobs:
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: 'Change Control'
-          change-request: '{"setCloseCode":"true","attributes":{"short_description":"change created from github", "assignment_group":"0a52d3dcd7011200f2d224837e6103f2"}}'
+          change-request: '{"setCloseCode":"true","attributes":{"short_description":"change created from github", "assignment_group":"0a52d3dcd7011200f2d224837e6103f2", "Category":"Other"}}'
           interval: '100'
           timeout: '3600'
           abortOnChangeCreationFailure: true
